@@ -1,11 +1,5 @@
 #!/bin/bash
 
-# Taking Ownership
-tpm2_clear
-tpm2_startup -c
-tpm2_changeauth -c owner password
-tpm2_changeauth -c endorsement password
-
 # Creating PCR1 policy
 tpm2_startauthsession -S session.ctx
 tpm2_policypcr -S session.ctx -l sha1:23 -L set1.pcr0.policy

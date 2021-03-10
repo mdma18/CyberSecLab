@@ -1,12 +1,17 @@
-#!/bin/bash 
+#!/bin/bash
 
-# Run Ownership script with desired password to set TPM env pass
+#----------------------------------------------------------------------#
 
-# Flush TPM memory 
+# Call script to encrypt data
+./Encrypt.sh
+
+# Call script to create policy
+./Policy.sh
+
 tpm2_flushcontext -t
-
-# Create an encryption key
-tpm2_createprimary -c encrypt.ctx -P mdma
-tpm2_create -G rsa2048 -u rsa.pub -r rsa.priv -C ecrypt.ctx 
-tpm2_load -C encrypt.ctx -u rsa.pub -r rsa.priv -c encryptedkey.ctx
-tpm2_rsaencrypt -c key.ctx -o encryptedmsg.enc MySecureFile.txt 
+# Create policy on object
+tpm2_startauthsession -S session.ctx --policy-session
+tpm2_policypcr -S session.ctx -l sha256:3 -L pcr.policy
+tpm2_load -C policy.ctx -u sealpub.pub -r sealpriv.pub -c sealkey.ctx
+# rm session.ctx sealpriv.pub sealpub.pub
+tpm2_unseal -p"session:session.ctx" -c sealkey.ctx

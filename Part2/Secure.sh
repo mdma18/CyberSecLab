@@ -3,7 +3,7 @@
 #----------------------------------------------------------------------#
 
 # Call script to encrypt data
-./Encrypt.sh
+# ./Encrypt.sh
 
 # Call script to create policy
 ./Policy.sh
